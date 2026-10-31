@@ -120,11 +120,23 @@ entregues = entregues.dropna(
 
 # Verifica quais pedidos chegaram atrasados
 entregues["atrasado"] = (
+    entregues["order_delivered_customer_date"].dt.normalize()
+    > entregues["order_estimated_delivery_date"].dt.normalize()
+)
+# Conferência dos critérios de atraso
+atrasos_com_horario = (
     entregues["order_delivered_customer_date"]
     > entregues["order_estimated_delivery_date"]
-)
+).sum()
 
-# Conta as entregas atrasadas
+atrasos_somente_data = entregues["atrasado"].sum()
+
+print("\nCONFERÊNCIA DO CRITÉRIO DE ATRASO:")
+print(f"Com horário: {atrasos_com_horario}")
+print(f"Somente data: {atrasos_somente_data}")
+print(f"Diferença: {atrasos_com_horario - atrasos_somente_data}")
+
+# Conta as entregas analisadas e atrasadas
 total_entregues = len(entregues)
 
 total_atrasados = entregues["atrasado"].sum()
@@ -359,11 +371,11 @@ entregues["tempo_entrega_dias"] = (
     - entregues["order_purchase_timestamp"]
 ).dt.total_seconds() / 86400
 
-# Calcula a diferença entre a entrega e o prazo previsto
+# Calcula o atraso em dias completos de calendário
 entregues["dias_atraso"] = (
-    entregues["order_delivered_customer_date"]
-    - entregues["order_estimated_delivery_date"]
-).dt.total_seconds() / 86400
+    entregues["order_delivered_customer_date"].dt.normalize()
+    - entregues["order_estimated_delivery_date"].dt.normalize()
+).dt.days
 
 # Seleciona apenas os pedidos atrasados
 pedidos_atrasados = entregues[
