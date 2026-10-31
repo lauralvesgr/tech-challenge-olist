@@ -1,0 +1,21 @@
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
+
+# Ambientes virtuais
+.venv/
+venv/
+
+# Configurações locais
+.env
+
+# Arquivos temporários do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de configuração do editor
+.vscode/
+
+# Dados originais da Olist
+data/
